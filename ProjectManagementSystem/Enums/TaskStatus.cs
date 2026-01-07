@@ -1,9 +1,9 @@
 namespace ProjectManagementSystem.Enums;
 
-public enum TaskItemStatus
+public enum TaskStatus
 {
-    Todo = 1,
-    InProgress = 2,
-    Done = 3
+    Todo = 0,
+    InProgress = 1,
+    Done = 2
 }
 
