@@ -1,6 +1,6 @@
 namespace ProjectManagementSystem.Enums;
 
-public enum TaskPriority
+public enum TaskItemPriority
 {
     Low = 1,
     Medium = 2,
