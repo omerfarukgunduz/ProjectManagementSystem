@@ -10,6 +10,8 @@ public class User
     public int RoleId { get; set; }
     public Role Role { get; set; } = null!;
 
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
     // Navigation
     public ICollection<ProjectUser> ProjectUsers { get; set; } = new List<ProjectUser>();
     public ICollection<TaskItem> AssignedTasks { get; set; } = new List<TaskItem>();
