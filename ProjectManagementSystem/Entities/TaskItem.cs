@@ -1,3 +1,5 @@
+using ProjectManagementSystem.Enums;
+
 namespace ProjectManagementSystem.Entities;
 
 public class TaskItem
@@ -6,8 +8,8 @@ public class TaskItem
     public string Title { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
 
-    public TaskStatus Status { get; set; }
-    public TaskPriority Priority { get; set; }
+    public TaskItemStatus Status { get; set; }
+    public TaskItemPriority Priority { get; set; }
 
     public int AssignedUserId { get; set; }
     public User AssignedUser { get; set; } = null!;
