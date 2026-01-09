@@ -14,6 +14,6 @@ public class User
 
     // Navigation
     public ICollection<ProjectUser> ProjectUsers { get; set; } = new List<ProjectUser>();
-    public ICollection<TaskItem> AssignedTasks { get; set; } = new List<TaskItem>();
+    public ICollection<TaskUser> TaskUsers { get; set; } = new List<TaskUser>();
 }
 

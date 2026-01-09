@@ -16,6 +16,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Project> Projects { get; set; }
     public DbSet<TaskItem> TaskItems { get; set; }
     public DbSet<ProjectUser> ProjectUsers { get; set; }
+    public DbSet<TaskUser> TaskUsers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -35,12 +36,21 @@ public class ApplicationDbContext : DbContext
             .HasForeignKey(t => t.ProjectId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // User - TaskItem (One-to-Many) - AssignedUser
-        modelBuilder.Entity<TaskItem>()
-            .HasOne(t => t.AssignedUser)
-            .WithMany(u => u.AssignedTasks)
-            .HasForeignKey(t => t.AssignedUserId)
-            .OnDelete(DeleteBehavior.Restrict);
+        // TaskItem - User (Many-to-Many via TaskUser)
+        modelBuilder.Entity<TaskUser>()
+            .HasKey(tu => new { tu.TaskId, tu.UserId });
+
+        modelBuilder.Entity<TaskUser>()
+            .HasOne(tu => tu.Task)
+            .WithMany(t => t.TaskUsers)
+            .HasForeignKey(tu => tu.TaskId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<TaskUser>()
+            .HasOne(tu => tu.User)
+            .WithMany(u => u.TaskUsers)
+            .HasForeignKey(tu => tu.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         // Project - User (Many-to-Many via ProjectUser)
         modelBuilder.Entity<ProjectUser>()
