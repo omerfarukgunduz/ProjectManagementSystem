@@ -1,5 +1,97 @@
 @ProjectManagementSystem_HostAddress = http://localhost:5093
+@Token = 
 
+### ============================================
+### AUTHENTICATION ENDPOINTS
+### ============================================
+
+### 1. Kullanıcı Kayıt (Register)
+POST {{ProjectManagementSystem_HostAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "email": "test@example.com",
+  "password": "Test123!",
+  "roleId": 2
+}
+
+### 2. Admin Kayıt (Register as Admin)
+POST {{ProjectManagementSystem_HostAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "email": "admin@example.com",
+  "password": "Admin123!",
+  "roleId": 1
+}
+
+### 3. Giriş Yap (Login)
+POST {{ProjectManagementSystem_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "Admin123!"
+}
+
+### ============================================
+### USER MANAGEMENT ENDPOINTS
+### ============================================
+
+### 4. Tüm Kullanıcıları Listele (Admin Only)
+GET {{ProjectManagementSystem_HostAddress}}/api/users
+Authorization: Bearer {{Token}}
+Accept: application/json
+
+### 5. Kullanıcı Detayı Getir
+GET {{ProjectManagementSystem_HostAddress}}/api/users/1
+Authorization: Bearer {{Token}}
+Accept: application/json
+
+### 6. Yeni Kullanıcı Oluştur (Admin Only)
+POST {{ProjectManagementSystem_HostAddress}}/api/users
+Authorization: Bearer {{Token}}
+Content-Type: application/json
+
+{
+  "username": "newuser",
+  "email": "newuser@example.com",
+  "password": "NewUser123!",
+  "roleId": 2
+}
+
+### 7. Kullanıcı Güncelle (Admin Only)
+PUT {{ProjectManagementSystem_HostAddress}}/api/users/1
+Authorization: Bearer {{Token}}
+Content-Type: application/json
+
+{
+  "username": "updateduser",
+  "email": "updated@example.com",
+  "roleId": 2
+}
+
+### 8. Kullanıcı Sil (Admin Only)
+DELETE {{ProjectManagementSystem_HostAddress}}/api/users/1
+Authorization: Bearer {{Token}}
+
+### 9. Kendi Şifresini Değiştir
+POST {{ProjectManagementSystem_HostAddress}}/api/users/change-password
+Authorization: Bearer {{Token}}
+Content-Type: application/json
+
+{
+  "currentPassword": "OldPassword123!",
+  "newPassword": "NewPassword123!"
+}
+
+### ============================================
+### TEST ENDPOINT
+### ============================================
+
+### 10. Weather Forecast (Test)
 GET {{ProjectManagementSystem_HostAddress}}/weatherforecast/
 Accept: application/json
 

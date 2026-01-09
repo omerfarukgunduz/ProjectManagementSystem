@@ -28,13 +28,28 @@ public class AuthService
             return (false, "Email already exists.", null, null, null, null);
         }
 
-        // Rol = User olarak ata (RoleId = 2 veya "User" rolünü bul)
-        var userRole = await _context.Roles
-            .FirstOrDefaultAsync(r => r.Name == "User");
-
-        if (userRole == null)
+        // Rol belirlenmişse onu kullan, yoksa varsayılan olarak "User" rolünü ata
+        Role? role;
+        if (registerDto.RoleId.HasValue && registerDto.RoleId.Value > 0)
         {
-            return (false, "User role not found. Please create roles first.", null, null, null, null);
+            role = await _context.Roles
+                .FirstOrDefaultAsync(r => r.Id == registerDto.RoleId.Value);
+            
+            if (role == null)
+            {
+                return (false, "Role not found.", null, null, null, null);
+            }
+        }
+        else
+        {
+            // Varsayılan olarak "User" rolünü ata
+            role = await _context.Roles
+                .FirstOrDefaultAsync(r => r.Name == "User");
+            
+            if (role == null)
+            {
+                return (false, "User role not found. Please create roles first.", null, null, null, null);
+            }
         }
 
         // Şifreyi bcrypt ile hashle
@@ -46,7 +61,7 @@ public class AuthService
             Username = registerDto.Username,
             Email = registerDto.Email,
             PasswordHash = passwordHash,
-            RoleId = userRole.Id
+            RoleId = role.Id
         };
 
         // Kullanıcıyı kaydet
