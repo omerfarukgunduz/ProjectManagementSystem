@@ -58,6 +58,9 @@ builder.Services.AddScoped<ProjectManagementSystem.Services.Auth.AuthService>();
 // User Service
 builder.Services.AddScoped<ProjectManagementSystem.Services.IUserService, ProjectManagementSystem.Services.UserService>();
 
+// Project Service
+builder.Services.AddScoped<ProjectManagementSystem.Services.IProjectService, ProjectManagementSystem.Services.ProjectService>();
+
 // JWT Authentication Configuration
 builder.Services.AddAuthentication(options =>
 {
