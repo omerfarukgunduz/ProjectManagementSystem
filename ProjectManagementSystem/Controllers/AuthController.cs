@@ -80,5 +80,55 @@ public class AuthController : ControllerBase
         // The client should remove the token from storage
         return Ok(new { message = "Logout successful." });
     }
+
+    /// <summary>
+    /// Forgot password - sends password reset email
+    /// </summary>
+    [HttpPost("forgot-password")]
+    public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto forgotPasswordDto)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        try
+        {
+            var result = await _authService.ForgotPasswordAsync(forgotPasswordDto);
+
+            if (!result.Success)
+            {
+                return BadRequest(new { message = result.Message });
+            }
+
+            return Ok(new { message = result.Message });
+        }
+        catch (Exception ex)
+        {
+            // Log the exception for debugging
+            return StatusCode(500, new { message = "Şifre sıfırlama işlemi sırasında bir hata oluştu. Lütfen daha sonra tekrar deneyin.", error = ex.Message });
+        }
+    }
+
+    /// <summary>
+    /// Reset password - resets password using token
+    /// </summary>
+    [HttpPost("reset-password")]
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto resetPasswordDto)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var result = await _authService.ResetPasswordAsync(resetPasswordDto);
+
+        if (!result.Success)
+        {
+            return BadRequest(new { message = result.Message });
+        }
+
+        return Ok(new { message = result.Message });
+    }
 }
 

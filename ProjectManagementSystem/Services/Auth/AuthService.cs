@@ -1,8 +1,11 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using ProjectManagementSystem.Auth;
 using ProjectManagementSystem.Data;
 using ProjectManagementSystem.DTOs;
 using ProjectManagementSystem.Entities;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace ProjectManagementSystem.Services.Auth;
 
@@ -10,11 +13,22 @@ public class AuthService
 {
     private readonly ApplicationDbContext _context;
     private readonly JwtTokenService _tokenService;
+    private readonly IEmailService _emailService;
+    private readonly IConfiguration _configuration;
+    private readonly ILogger<AuthService> _logger;
 
-    public AuthService(ApplicationDbContext context, JwtTokenService tokenService)
+    public AuthService(
+        ApplicationDbContext context, 
+        JwtTokenService tokenService, 
+        IEmailService emailService,
+        IConfiguration configuration,
+        ILogger<AuthService> logger)
     {
         _context = context;
         _tokenService = tokenService;
+        _emailService = emailService;
+        _configuration = configuration;
+        _logger = logger;
     }
 
     public async Task<(bool Success, string Message, string? Token, string? Role, int? UserId, string? Username)> Register(RegisterDto registerDto)
@@ -101,6 +115,101 @@ public class AuthService
         var token = _tokenService.GenerateToken(user, user.Role.Name);
 
         return (true, "Login successful.", token, user.Role.Name, user.Id, user.Username);
+    }
+
+    public async Task<(bool Success, string Message)> ForgotPasswordAsync(ForgotPasswordDto forgotPasswordDto)
+    {
+        // Kullanıcıyı email'e göre bul
+        var user = await _context.Users
+            .FirstOrDefaultAsync(u => u.Email == forgotPasswordDto.Email);
+
+        // Güvenlik için: Kullanıcı yoksa bile başarılı mesaj döndür (email enumeration saldırısını önlemek için)
+        if (user == null)
+        {
+            _logger.LogWarning($"Şifre sıfırlama talebi - Kullanıcı bulunamadı: {forgotPasswordDto.Email}");
+            return (true, "Eğer bu e-posta adresi sistemde kayıtlıysa, şifre sıfırlama bağlantısı gönderilmiştir.");
+        }
+
+        // Token oluştur (güvenli rastgele token)
+        var tokenBytes = new byte[32];
+        using (var rng = RandomNumberGenerator.Create())
+        {
+            rng.GetBytes(tokenBytes);
+        }
+        var resetToken = Convert.ToBase64String(tokenBytes)
+            .Replace("+", "-")
+            .Replace("/", "_")
+            .Replace("=", "");
+
+        // Token'ı veritabanına kaydet (24 saat geçerli)
+        user.PasswordResetToken = resetToken;
+        user.PasswordResetTokenExpiry = DateTime.UtcNow.AddHours(24);
+        await _context.SaveChangesAsync();
+
+        // Email gönder
+        var mvcBaseUrl = _configuration["MvcSettings:BaseUrl"] ?? "https://localhost:7236";
+        var resetUrl = $"{mvcBaseUrl}/Auth/ResetPassword?token={Uri.EscapeDataString(resetToken)}&email={Uri.EscapeDataString(user.Email)}";
+
+        try
+        {
+            var emailSent = await _emailService.SendPasswordResetEmailAsync(
+                user.Email,
+                user.Username,
+                resetToken,
+                resetUrl
+            );
+
+            if (!emailSent)
+            {
+                _logger.LogError($"Şifre sıfırlama emaili gönderilemedi: {user.Email}");
+                return (false, "Email gönderilirken bir hata oluştu. Lütfen daha sonra tekrar deneyin.");
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Şifre sıfırlama emaili gönderilirken hata: {ex.Message}");
+            return (false, "Email gönderilirken bir hata oluştu. Lütfen daha sonra tekrar deneyin.");
+        }
+
+        return (true, "Eğer bu e-posta adresi sistemde kayıtlıysa, şifre sıfırlama bağlantısı gönderilmiştir.");
+    }
+
+    public async Task<(bool Success, string Message)> ResetPasswordAsync(ResetPasswordDto resetPasswordDto)
+    {
+        // Kullanıcıyı email ve token'a göre bul
+        var user = await _context.Users
+            .FirstOrDefaultAsync(u => 
+                u.Email == resetPasswordDto.Email && 
+                u.PasswordResetToken == resetPasswordDto.Token);
+
+        if (user == null)
+        {
+            return (false, "Geçersiz veya süresi dolmuş şifre sıfırlama bağlantısı.");
+        }
+
+        // Token süresi dolmuş mu kontrol et
+        if (user.PasswordResetTokenExpiry == null || user.PasswordResetTokenExpiry < DateTime.UtcNow)
+        {
+            // Token'ı temizle
+            user.PasswordResetToken = null;
+            user.PasswordResetTokenExpiry = null;
+            await _context.SaveChangesAsync();
+
+            return (false, "Şifre sıfırlama bağlantısının süresi dolmuş. Lütfen yeni bir şifre sıfırlama talebinde bulunun.");
+        }
+
+        // Yeni şifreyi hashle ve kaydet
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(resetPasswordDto.NewPassword);
+        
+        // Token'ı temizle (tek kullanımlık)
+        user.PasswordResetToken = null;
+        user.PasswordResetTokenExpiry = null;
+
+        await _context.SaveChangesAsync();
+
+        _logger.LogInformation($"Şifre başarıyla sıfırlandı: {user.Email}");
+
+        return (true, "Şifreniz başarıyla sıfırlandı. Yeni şifrenizle giriş yapabilirsiniz.");
     }
 }
 

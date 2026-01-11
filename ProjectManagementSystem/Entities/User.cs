@@ -12,6 +12,10 @@ public class User
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+    // Password Reset
+    public string? PasswordResetToken { get; set; }
+    public DateTime? PasswordResetTokenExpiry { get; set; }
+
     // Navigation
     public ICollection<ProjectUser> ProjectUsers { get; set; } = new List<ProjectUser>();
     public ICollection<TaskUser> TaskUsers { get; set; } = new List<TaskUser>();

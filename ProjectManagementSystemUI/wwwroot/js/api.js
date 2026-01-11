@@ -164,6 +164,20 @@ const api = {
             return api.request('/auth/logout', {
                 method: 'POST'
             });
+        },
+        forgotPassword: async (email) => {
+            return api.request('/auth/forgot-password', {
+                method: 'POST',
+                body: JSON.stringify({ email }),
+                includeAuth: false
+            });
+        },
+        resetPassword: async (token, email, newPassword) => {
+            return api.request('/auth/reset-password', {
+                method: 'POST',
+                body: JSON.stringify({ token, email, newPassword }),
+                includeAuth: false
+            });
         }
     },
 
