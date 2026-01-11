@@ -33,13 +33,16 @@ ProjectManagementSystem/
 │   │   ├── UsersController.cs        # User management (Admin only)
 │   │   ├── ProjectsController.cs     # Project management
 │   │   ├── TasksController.cs        # Task management
-│   │   └── DashboardController.cs   # Dashboard statistics
+│   │   ├── DashboardController.cs   # Dashboard statistics
+│   │   └── SmtpSettingsController.cs # SMTP settings management (Admin only)
 │   ├── Services/                      # Business Logic
 │   │   ├── Auth/                      # Authentication service
 │   │   ├── UserService.cs             # User operations
 │   │   ├── ProjectService.cs          # Project operations
 │   │   ├── TaskService.cs             # Task operations
-│   │   └── DashboardService.cs       # Dashboard statistics
+│   │   ├── DashboardService.cs       # Dashboard statistics
+│   │   ├── EmailService.cs            # Email sending service
+│   │   └── SmtpSettingsService.cs     # SMTP settings management
 │   ├── Data/                          # DbContext
 │   │   └── ApplicationDbContext.cs    # Entity Framework context
 │   ├── Entities/                      # Domain Models
@@ -48,7 +51,8 @@ ProjectManagementSystem/
 │   │   ├── Project.cs                 # Project entity
 │   │   ├── TaskItem.cs                # Task entity
 │   │   ├── ProjectUser.cs             # Project-User junction
-│   │   └── TaskUser.cs                # Task-User junction
+│   │   ├── TaskUser.cs                # Task-User junction
+│   │   └── SmtpSettings.cs            # SMTP settings entity
 │   ├── DTOs/                          # Data Transfer Objects
 │   │   ├── CreateUserDto.cs           # User creation DTO
 │   │   ├── UpdateUserDto.cs           # User update DTO
@@ -56,6 +60,9 @@ ProjectManagementSystem/
 │   │   ├── UpdateProjectDto.cs        # Project update DTO
 │   │   ├── CreateTaskDto.cs           # Task creation DTO
 │   │   ├── UpdateTaskDto.cs           # Task update DTO
+│   │   ├── ForgotPasswordDto.cs       # Forgot password DTO
+│   │   ├── ResetPasswordDto.cs        # Reset password DTO
+│   │   ├── SmtpSettingsDto.cs         # SMTP settings DTO
 │   │   └── ...                        # Diğer DTO'lar
 │   ├── Enums/                         # Enum Types
 │   │   ├── TaskItemStatus.cs          # Task status enum
@@ -67,11 +74,12 @@ ProjectManagementSystem/
 │
 └── ProjectManagementSystemUI/        # MVC Projesi
     ├── Controllers/                   # MVC Controllers
-    │   ├── AuthController.cs          # Login/Logout
+    │   ├── AuthController.cs          # Login/Logout/ForgotPassword/ResetPassword
     │   ├── DashboardController.cs     # Dashboard page
     │   ├── UsersController.cs         # User management pages
     │   ├── ProjectsController.cs      # Project management pages
-    │   └── TasksController.cs         # Task management pages
+    │   ├── TasksController.cs         # Task management pages
+    │   └── SettingsController.cs      # System settings (SMTP) - Admin only
     ├── Views/                         # Razor Views
     │   ├── Auth/                      # Login view
     │   ├── Dashboard/                 # Dashboard view
@@ -205,6 +213,16 @@ Sınırlı yetkilere sahiptir:
 - `POST /api/auth/logout` - Kullanıcı çıkışı (Authorize gerekli)
   - Response: `{ "message": "Logout successful." }`
 
+- `POST /api/auth/forgot-password` - Şifre sıfırlama talebi
+  - Request: `{ "email": "string" }`
+  - Response: `{ "message": "string" }`
+  - Email gönderir (kullanıcı yoksa bile güvenlik için başarı mesajı döner)
+
+- `POST /api/auth/reset-password` - Şifre sıfırlama
+  - Request: `{ "token": "string", "email": "string", "newPassword": "string" }`
+  - Response: `{ "message": "string" }`
+  - Token 24 saat geçerlidir, tek kullanımlıktır
+
 ### Users (Admin only)
 - `GET /api/users` - Tüm kullanıcıları listele
 - `GET /api/users/{id}` - Kullanıcı detayı
@@ -250,6 +268,12 @@ Sınırlı yetkilere sahiptir:
   - User: Kendi verilerine ait istatistikler
   - Response: `{ "totalProjects": int, "totalTasks": int, "completedTasks": int, "inProgressTasks": int, "todoTasks": int }`
 
+### SMTP Settings (Admin only)
+- `GET /api/smtpsettings` - SMTP ayarlarını getir
+- `POST /api/smtpsettings` - SMTP ayarlarını kaydet/güncelle
+  - Request: `{ "host": "string", "port": int, "username": "string", "password": "string", "enableSsl": bool, "fromEmail": "string", "fromName": "string", "isActive": bool }`
+- `POST /api/smtpsettings/test` - SMTP bağlantısını test et
+
 ## Veritabanı Yapısı
 
 ### Entity İlişkileri
@@ -273,6 +297,8 @@ Sınırlı yetkilere sahiptir:
 - `PasswordHash` (string) - BCrypt hash
 - `RoleId` (int, FK -> Roles)
 - `CreatedAt` (DateTime)
+- `PasswordResetToken` (string, nullable) - Şifre sıfırlama token'ı
+- `PasswordResetTokenExpiry` (DateTime, nullable) - Token geçerlilik süresi
 
 #### Projects
 - `Id` (int, PK)
@@ -298,6 +324,19 @@ Sınırlı yetkilere sahiptir:
 - `TaskId` (int, FK -> TaskItems)
 - `UserId` (int, FK -> Users)
 - Composite Primary Key: (TaskId, UserId)
+
+#### SmtpSettings
+- `Id` (int, PK)
+- `Host` (string) - SMTP sunucu adresi
+- `Port` (int) - SMTP port numarası
+- `Username` (string) - SMTP kullanıcı adı
+- `Password` (string) - SMTP şifresi (veritabanında saklanır)
+- `EnableSsl` (bool) - SSL/TLS kullanımı
+- `FromEmail` (string) - Gönderen e-posta adresi
+- `FromName` (string) - Gönderen adı
+- `IsActive` (bool) - Aktif/pasif durumu
+- `CreatedAt` (DateTime)
+- `UpdatedAt` (DateTime, nullable)
 
 ## Güvenlik
 
@@ -325,11 +364,14 @@ Sınırlı yetkilere sahiptir:
 ## Frontend Özellikleri
 
 ### Sayfalar
-- **Login Sayfası** (`/Auth/Login`): Email ve şifre ile giriş
+- **Login Sayfası** (`/Auth/Login`): Email ve şifre ile giriş, "Şifremi Unuttum" linki
+- **Şifremi Unuttum** (`/Auth/ForgotPassword`): Email ile şifre sıfırlama talebi
+- **Şifre Sıfırla** (`/Auth/ResetPassword`): Token ile yeni şifre belirleme
 - **Dashboard** (`/Dashboard`): Kullanıcı rolüne göre istatistikler
 - **Projeler Sayfası** (`/Projects`): Proje listesi, ekleme, düzenleme, silme, detay görüntüleme
 - **Görevler Sayfası** (`/Tasks`): Kullanıcının görevleri, durum güncelleme
 - **Kullanıcılar Sayfası** (`/Users`): Admin için kullanıcı yönetimi
+- **Sistem Ayarları** (`/Settings/Smtp`): Admin için SMTP ayarları yönetimi
 
 ### Özellikler
 - Responsive tasarım (mobil uyumlu)
@@ -339,6 +381,9 @@ Sınırlı yetkilere sahiptir:
 - Rol bazlı UI elementleri (Admin/User)
 - Token yönetimi (localStorage)
 - Otomatik yönlendirme (yetkisiz erişimlerde)
+- **Email Bildirimleri**: Görev atamalarında otomatik email gönderimi
+- **Şifre Sıfırlama**: Email ile şifre sıfırlama özelliği
+- **SMTP Yönetimi**: Admin panelinden SMTP ayarları yönetimi (veritabanında saklanır)
 
 ## Varsayımlar
 
@@ -351,19 +396,32 @@ Sınırlı yetkilere sahiptir:
 7. Proje silindiğinde, projeye ait görevler de silinir (Cascade Delete)
 8. Görev silindiğinde, göreve atanan kullanıcı ilişkileri de silinir (Cascade Delete)
 
+## Email Sistemi
+
+### SMTP Yapılandırması
+- SMTP ayarları veritabanında saklanır (güvenlik için)
+- Admin kullanıcılar "Sistem Ayarları" sayfasından SMTP ayarlarını yönetebilir
+- Görev atamalarında otomatik email gönderilir
+- Şifre sıfırlama taleplerinde email gönderilir
+
+### Email Şablonları
+- **Görev Atama Emaili**: HTML formatında, görev detayları ile
+- **Şifre Sıfırlama Emaili**: HTML formatında, güvenli reset linki ile
+
+### Güvenlik
+- SMTP şifreleri veritabanında saklanır (production'da şifreleme önerilir)
+- Şifre sıfırlama token'ları 24 saat geçerlidir
+- Token'lar tek kullanımlıktır (kullanıldıktan sonra silinir)
+- Email enumeration koruması (kullanıcı yoksa bile başarı mesajı)
+
 ## Eksik Kalan veya Geliştirilebilecek Noktalar
 
-### Öncelikli İyileştirmeler
-1. **Şifre Sıfırlama**: Şifre unutma ve sıfırlama özelliği eklenebilir
-2. **Email Bildirimleri**: Görev atamaları ve durum değişiklikleri için email bildirimleri
+Eksik özellik bulunmamaktadır ancak ileride eklenebilecek bazı geliştirmeler şunlardır:
+1. **Dosya Yükleme**: Görevlere dosya ekleme özelliği
+2. **Yorum Sistemi**: Görevlere yorum ekleme özelliği
+3. **Zaman Takibi**: Görevler için zaman takibi 
+4. **Bulk İşlemler**: Toplu işlemler (toplu silme, güncelleme)
 
-### Orta Öncelikli İyileştirmeler
-6. **Dosya Yükleme**: Görevlere dosya ekleme özelliği
-7. **Yorum Sistemi**: Görevlere yorum ekleme özelliği
-8. **Zaman Takibi**: Görevler için zaman takibi (time tracking)
-9. **Raporlama**: Detaylı raporlama ve analitik özellikleri
-10. **Bulk İşlemler**: Toplu işlemler (toplu silme, güncelleme)
-11. **Export/Import**: Veri dışa/içe aktarma özellikleri
 
 ## API Dokümantasyonu
 
@@ -389,6 +447,17 @@ API dokümantasyonu Swagger UI üzerinden erişilebilir:
 4. **JWT token hatası:**
    - `appsettings.json` dosyasındaki JWT ayarlarını kontrol edin
    - Token'ın süresinin dolmadığından emin olun
+
+5. **Email gönderme hatası:**
+   - SMTP ayarlarının "Sistem Ayarları" sayfasından yapılandırıldığından emin olun
+   - Gmail kullanıyorsanız "Uygulama Şifresi" kullanın
+   - SMTP port ve SSL ayarlarını kontrol edin
+   - `appsettings.json` dosyasındaki `MvcSettings:BaseUrl` ayarını kontrol edin
+
+6. **Şifre sıfırlama hatası:**
+   - Migration'ların çalıştırıldığından emin olun (`PasswordResetToken` alanları)
+   - Email'in spam klasörüne düşmüş olabileceğini kontrol edin
+   - Token'ın süresinin dolmadığından emin olun (24 saat)
 
 ## İletişim
 
