@@ -2,16 +2,21 @@ using Microsoft.EntityFrameworkCore;
 using ProjectManagementSystem.Data;
 using ProjectManagementSystem.DTOs;
 using ProjectManagementSystem.Entities;
+using ProjectManagementSystem.Enums;
 
 namespace ProjectManagementSystem.Services;
 
 public class TaskService : ITaskService
 {
     private readonly ApplicationDbContext _context;
+    private readonly IEmailService _emailService;
+    private readonly ILogger<TaskService> _logger;
 
-    public TaskService(ApplicationDbContext context)
+    public TaskService(ApplicationDbContext context, IEmailService emailService, ILogger<TaskService> logger)
     {
         _context = context;
+        _emailService = emailService;
+        _logger = logger;
     }
 
     public async Task<IEnumerable<TaskResponseDto>> GetAllTasksAsync(int userId, bool isAdmin, int? projectId = null)
@@ -156,6 +161,34 @@ public class TaskService : ITaskService
             .Reference(t => t.Project)
             .LoadAsync();
 
+        // Atanan kullanıcılara email gönder
+        if (task.TaskUsers.Any())
+        {
+            var statusText = GetStatusText(task.Status);
+            var priorityText = GetPriorityText(task.Priority);
+
+            foreach (var taskUser in task.TaskUsers)
+            {
+                try
+                {
+                    await _emailService.SendTaskAssignmentEmailAsync(
+                        toEmail: taskUser.User.Email,
+                        toName: taskUser.User.Username,
+                        taskTitle: task.Title,
+                        taskDescription: task.Description,
+                        projectName: task.Project.Name,
+                        priority: priorityText,
+                        status: statusText
+                    );
+                }
+                catch (Exception ex)
+                {
+                    // Email gönderme hatası görevin oluşturulmasını engellemez
+                    _logger.LogError(ex, $"Görev atama emaili gönderilirken hata oluştu. Kullanıcı: {taskUser.User.Email}, Görev: {task.Id}");
+                }
+            }
+        }
+
         return new TaskResponseDto
         {
             Id = task.Id,
@@ -168,6 +201,28 @@ public class TaskService : ITaskService
             ProjectId = task.ProjectId,
             ProjectName = task.Project.Name,
             CreatedDate = task.CreatedDate
+        };
+    }
+
+    private string GetStatusText(TaskItemStatus status)
+    {
+        return status switch
+        {
+            TaskItemStatus.Todo => "Yapılacak",
+            TaskItemStatus.InProgress => "Devam Ediyor",
+            TaskItemStatus.Done => "Tamamlandı",
+            _ => status.ToString()
+        };
+    }
+
+    private string GetPriorityText(TaskItemPriority priority)
+    {
+        return priority switch
+        {
+            TaskItemPriority.Low => "Düşük",
+            TaskItemPriority.Medium => "Orta",
+            TaskItemPriority.High => "Yüksek",
+            _ => priority.ToString()
         };
     }
 

@@ -17,6 +17,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<TaskItem> TaskItems { get; set; }
     public DbSet<ProjectUser> ProjectUsers { get; set; }
     public DbSet<TaskUser> TaskUsers { get; set; }
+    public DbSet<SmtpSettings> SmtpSettings { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

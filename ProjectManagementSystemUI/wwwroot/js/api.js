@@ -229,5 +229,17 @@ const api = {
     // Dashboard endpoint
     dashboard: {
         getStats: async () => api.request('/dashboard')
+    },
+
+    // SMTP Settings endpoints (Admin only)
+    smtpSettings: {
+        get: async () => api.request('/smtpsettings'),
+        createOrUpdate: async (settingsData) => api.request('/smtpsettings', {
+            method: 'POST',
+            body: JSON.stringify(settingsData)
+        }),
+        test: async () => api.request('/smtpsettings/test', {
+            method: 'POST'
+        })
     }
 };

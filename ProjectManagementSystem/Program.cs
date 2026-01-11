@@ -67,6 +67,12 @@ builder.Services.AddScoped<ProjectManagementSystem.Services.ITaskService, Projec
 // Dashboard Service
 builder.Services.AddScoped<ProjectManagementSystem.Services.IDashboardService, ProjectManagementSystem.Services.DashboardService>();
 
+// Email Service
+builder.Services.AddScoped<ProjectManagementSystem.Services.IEmailService, ProjectManagementSystem.Services.EmailService>();
+
+// SMTP Settings Service
+builder.Services.AddScoped<ProjectManagementSystem.Services.ISmtpSettingsService, ProjectManagementSystem.Services.SmtpSettingsService>();
+
 // CORS Configuration
 builder.Services.AddCors(options =>
 {

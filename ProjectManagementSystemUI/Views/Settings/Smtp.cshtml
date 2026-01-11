@@ -1,0 +1,122 @@
+@{
+    ViewData["Title"] = "Sistem Ayarları - SMTP";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-gear-fill"></i> SMTP Ayarları
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div id="loadingIndicator" class="text-center py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Yükleniyor...</span>
+                        </div>
+                        <p class="mt-2">Ayarlar yükleniyor...</p>
+                    </div>
+
+                    <div id="settingsForm" style="display: none;">
+                        <form id="smtpSettingsForm">
+                            <input type="hidden" id="smtpSettingsId" />
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="smtpHost" class="form-label">
+                                        <i class="bi bi-server"></i> SMTP Sunucu Adresi <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control" id="smtpHost" required>
+                                    <div class="form-text">Örn: smtp.gmail.com</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="smtpPort" class="form-label">
+                                        <i class="bi bi-123"></i> Port <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="number" class="form-control" id="smtpPort" min="1" max="65535" required>
+                                    <div class="form-text">Genellikle 587 (TLS) veya 465 (SSL)</div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="smtpUsername" class="form-label">
+                                        <i class="bi bi-person"></i> Kullanıcı Adı <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control" id="smtpUsername" required>
+                                    <div class="form-text">E-posta adresiniz</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="smtpPassword" class="form-label">
+                                        <i class="bi bi-lock"></i> Şifre <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <input type="password" class="form-control" id="smtpPassword" required>
+                                        <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                            <i class="bi bi-eye" id="togglePasswordIcon"></i>
+                                        </button>
+                                    </div>
+                                    <div class="form-text">Gmail için: Uygulama Şifresi kullanın</div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="smtpFromEmail" class="form-label">
+                                        <i class="bi bi-envelope"></i> Gönderen E-posta <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="email" class="form-control" id="smtpFromEmail" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="smtpFromName" class="form-label">
+                                        <i class="bi bi-person-badge"></i> Gönderen Adı <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control" id="smtpFromName" required>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="smtpEnableSsl" checked>
+                                    <label class="form-check-label" for="smtpEnableSsl">
+                                        <i class="bi bi-shield-check"></i> SSL/TLS Kullan
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="smtpIsActive" checked>
+                                    <label class="form-check-label" for="smtpIsActive">
+                                        <i class="bi bi-power"></i> Aktif
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div id="formError" class="alert alert-danger" style="display: none;"></div>
+                            <div id="formSuccess" class="alert alert-success" style="display: none;"></div>
+
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-save"></i> Kaydet
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div id="noSettingsMessage" style="display: none;">
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i> Henüz SMTP ayarları yapılandırılmamış. Lütfen ayarları yapın.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/smtp-settings.js" asp-append-version="true"></script>
+}

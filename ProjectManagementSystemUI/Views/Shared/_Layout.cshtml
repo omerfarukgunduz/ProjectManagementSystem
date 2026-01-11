@@ -45,6 +45,11 @@
                             <i class="bi bi-people"></i> Kullanıcılar
                         </a>
                     </li>
+                    <li class="nav-item admin-only" style="display: none;">
+                        <a class="nav-link" asp-controller="Settings" asp-action="Smtp" id="navSettings">
+                            <i class="bi bi-gear"></i> Sistem Ayarları
+                        </a>
+                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
                             <i class="bi bi-person-circle"></i> <span class="navbar-username">Kullanıcı</span>
@@ -81,7 +86,8 @@
                 'Dashboard': document.getElementById('navDashboard'),
                 'Projects': document.getElementById('navProjects'),
                 'Tasks': document.getElementById('navTasks'),
-                'Users': document.getElementById('navUsers')
+                'Users': document.getElementById('navUsers'),
+                'Settings': document.getElementById('navSettings')
             };
             
             if (navLinks[controller]) {
