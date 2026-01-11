@@ -10,5 +10,6 @@ public interface IUserService
     Task<UserResponseDto?> UpdateUserAsync(int id, UpdateUserDto updateUserDto);
     Task<bool> DeleteUserAsync(int id);
     Task<bool> ChangePasswordAsync(int userId, ChangePasswordDto changePasswordDto);
+    Task<IEnumerable<RoleDto>> GetAllRolesAsync();
 }
 

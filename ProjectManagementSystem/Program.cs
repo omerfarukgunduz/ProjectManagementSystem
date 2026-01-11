@@ -64,6 +64,43 @@ builder.Services.AddScoped<ProjectManagementSystem.Services.IProjectService, Pro
 // Task Service
 builder.Services.AddScoped<ProjectManagementSystem.Services.ITaskService, ProjectManagementSystem.Services.TaskService>();
 
+// Dashboard Service
+builder.Services.AddScoped<ProjectManagementSystem.Services.IDashboardService, ProjectManagementSystem.Services.DashboardService>();
+
+// CORS Configuration
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowMVC", policy =>
+    {
+        if (builder.Environment.IsDevelopment())
+        {
+            // Development: Allow all localhost origins
+            policy.WithOrigins(
+                    "https://localhost:7236",
+                    "http://localhost:5026",
+                    "http://localhost:36485",
+                    "https://localhost:44302",
+                    "http://localhost:5093",
+                    "https://localhost:7241"
+                )
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials();
+        }
+        else
+        {
+            // Production: Specific origins only
+            policy.WithOrigins(
+                    "https://localhost:7236",
+                    "http://localhost:5026"
+                )
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials();
+        }
+    });
+});
+
 // JWT Authentication Configuration
 builder.Services.AddAuthentication(options =>
 {
@@ -101,9 +138,18 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// CORS - Must be before UseAuthentication and UseAuthorization
+app.UseCors("AllowMVC");
+
+// Static files (wwwroot)
+app.UseStaticFiles();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Default route - redirect to Swagger UI
+app.MapGet("/", () => Results.Redirect("/swagger"));
 
 app.Run();

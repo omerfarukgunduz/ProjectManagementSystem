@@ -196,5 +196,18 @@ public class UserService : IUserService
 
         return true;
     }
+
+    public async Task<IEnumerable<RoleDto>> GetAllRolesAsync()
+    {
+        var roles = await _context.Roles
+            .Select(r => new RoleDto
+            {
+                Id = r.Id,
+                Name = r.Name
+            })
+            .ToListAsync();
+
+        return roles;
+    }
 }
 

@@ -63,7 +63,9 @@ public class TasksController : ControllerBase
 
         try
         {
-            var task = await _taskService.CreateTaskAsync(createTaskDto);
+            var userId = GetUserId();
+            var isAdmin = User.IsInRole("Admin");
+            var task = await _taskService.CreateTaskAsync(createTaskDto, userId, isAdmin);
             return CreatedAtAction(nameof(GetTaskById), new { id = task.Id }, task);
         }
         catch (InvalidOperationException ex)
@@ -85,7 +87,9 @@ public class TasksController : ControllerBase
 
         try
         {
-            var task = await _taskService.UpdateTaskAsync(id, updateTaskDto);
+            var userId = GetUserId();
+            var isAdmin = User.IsInRole("Admin");
+            var task = await _taskService.UpdateTaskAsync(id, updateTaskDto, userId, isAdmin);
 
             if (task == null)
             {
@@ -106,14 +110,23 @@ public class TasksController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteTask(int id)
     {
-        var result = await _taskService.DeleteTaskAsync(id);
-
-        if (!result)
+        try
         {
-            return NotFound(new { message = "Task not found." });
-        }
+            var userId = GetUserId();
+            var isAdmin = User.IsInRole("Admin");
+            var result = await _taskService.DeleteTaskAsync(id, userId, isAdmin);
 
-        return NoContent();
+            if (!result)
+            {
+                return NotFound(new { message = "Task not found." });
+            }
+
+            return NoContent();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
     private int GetUserId()

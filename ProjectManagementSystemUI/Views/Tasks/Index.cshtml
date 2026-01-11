@@ -1,0 +1,170 @@
+@{
+    ViewData["Title"] = "Görevler";
+    Layout = "_Layout";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h2 class="mb-0">
+            <i class="bi bi-list-check text-primary"></i> Görevlerim
+        </h2>
+    </div>
+</div>
+
+<!-- Project Filter (Admin için tüm projeler, User için kendi projeleri) -->
+<div class="row mb-4">
+    <div class="col-12 col-md-4">
+        <label for="projectFilter" class="form-label">
+            <i class="bi bi-folder"></i> Proje Filtresi
+        </label>
+        <select class="form-select" id="projectFilter">
+            <option value="">Tüm Projeler</option>
+            <option value="loading">Yükleniyor...</option>
+        </select>
+    </div>
+</div>
+
+<!-- Tasks Table -->
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">
+            <i class="bi bi-table"></i> Görevler Listesi
+        </h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th class="text-dark fw-bold"><i class="bi bi-hash"></i> ID</th>
+                        <th class="text-dark fw-bold"><i class="bi bi-card-heading"></i> Başlık</th>
+                        <th class="text-dark fw-bold"><i class="bi bi-folder"></i> Proje</th>
+                        <th class="text-dark fw-bold"><i class="bi bi-flag"></i> Durum</th>
+                        <th class="text-dark fw-bold"><i class="bi bi-exclamation-triangle"></i> Öncelik</th>
+                        <th class="text-dark fw-bold"><i class="bi bi-calendar"></i> Oluşturulma Tarihi</th>
+                        <th class="text-dark fw-bold"><i class="bi bi-arrow-repeat"></i> Durum Güncelle</th>
+                        <th class="text-dark fw-bold admin-only-column" style="display: none;"><i class="bi bi-gear"></i> İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody id="tasksTableBody">
+                    <tr>
+                        <td colspan="8" class="text-center py-5">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Yükleniyor...</span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Task Modal -->
+<div class="modal fade" id="editTaskModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Görev Düzenle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editTaskForm">
+                    <input type="hidden" id="editTaskId">
+                    <div id="editTaskError" class="alert alert-danger" style="display: none;"></div>
+
+                    <div class="mb-3">
+                        <label for="editTaskTitle" class="form-label">
+                            <i class="bi bi-card-heading"></i> Başlık <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control" id="editTaskTitle" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="editTaskDescription" class="form-label">
+                            <i class="bi bi-file-text"></i> Açıklama
+                        </label>
+                        <textarea class="form-control" id="editTaskDescription" rows="4"></textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="editTaskProjectId" class="form-label">
+                                <i class="bi bi-folder"></i> Proje <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select" id="editTaskProjectId" required>
+                                <option value="">Proje seçin...</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="editTaskStatus" class="form-label">
+                                <i class="bi bi-flag"></i> Durum
+                            </label>
+                            <select class="form-select" id="editTaskStatus">
+                                <option value="0">Yapılacak</option>
+                                <option value="1">Devam Ediyor</option>
+                                <option value="2">Tamamlandı</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="editTaskPriority" class="form-label">
+                                <i class="bi bi-exclamation-triangle"></i> Öncelik
+                            </label>
+                            <select class="form-select" id="editTaskPriority">
+                                <option value="0">Düşük</option>
+                                <option value="1">Orta</option>
+                                <option value="2">Yüksek</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="editTaskAssignedUserIds" class="form-label">
+                                <i class="bi bi-people"></i> Atanan Kullanıcılar
+                            </label>
+                            <select class="form-select" id="editTaskAssignedUserIds" multiple size="5">
+                                <option value="">Kullanıcılar yükleniyor...</option>
+                            </select>
+                            <small class="form-text text-muted">
+                                Birden fazla kullanıcı seçmek için Ctrl (Windows) veya Cmd (Mac) tuşuna basılı tutun.
+                            </small>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-primary" id="saveTaskBtn">Kaydet</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteTaskModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Görevi Sil</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Bu görevi silmek istediğinizden emin misiniz?</p>
+                <p class="text-muted">
+                    <strong id="deleteTaskName"></strong> adlı görev kalıcı olarak silinecektir.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteTaskBtn">Sil</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/tasks.js" asp-append-version="true"></script>
+}

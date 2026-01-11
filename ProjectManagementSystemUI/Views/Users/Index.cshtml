@@ -1,0 +1,80 @@
+@{
+    ViewData["Title"] = "Kullanıcılar";
+    Layout = "_Layout";
+}
+
+<div class="row mb-4">
+    <div class="col-12 d-flex justify-content-between align-items-center">
+        <h2 class="mb-0">
+            <i class="bi bi-people text-primary"></i> Kullanıcılar
+        </h2>
+        <a
+            asp-controller="Users"
+            asp-action="Add"
+            class="btn btn-primary"
+            id="addUserLink"
+        >
+            <i class="bi bi-plus-circle"></i> Yeni Kullanıcı
+        </a>
+    </div>
+</div>
+
+<!-- Users Table -->
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">
+            <i class="bi bi-table"></i> Kullanıcılar Listesi
+        </h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th class="text-dark fw-bold"><i class="bi bi-hash"></i> ID</th>
+                        <th class="text-dark fw-bold"><i class="bi bi-person"></i> Kullanıcı Adı</th>
+                        <th class="text-dark fw-bold"><i class="bi bi-envelope"></i> E-posta</th>
+                        <th class="text-dark fw-bold"><i class="bi bi-shield-check"></i> Rol</th>
+                        <th class="text-dark fw-bold"><i class="bi bi-calendar"></i> Kayıt Tarihi</th>
+                        <th class="text-end text-dark fw-bold"><i class="bi bi-gear"></i> İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTableBody">
+                    <tr>
+                        <td colspan="6" class="text-center py-5">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Yükleniyor...</span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Kullanıcıyı Sil</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Bu kullanıcıyı silmek istediğinizden emin misiniz?</p>
+                <p class="text-muted">
+                    <strong id="deleteUserName"></strong> adlı kullanıcı kalıcı olarak silinecektir.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Sil</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/users.js" asp-append-version="true"></script>
+}

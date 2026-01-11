@@ -90,13 +90,26 @@ public class TaskService : ITaskService
         };
     }
 
-    public async Task<TaskResponseDto> CreateTaskAsync(CreateTaskDto createTaskDto)
+    public async Task<TaskResponseDto> CreateTaskAsync(CreateTaskDto createTaskDto, int userId, bool isAdmin)
     {
         // Proje kontrolü
-        var project = await _context.Projects.FindAsync(createTaskDto.ProjectId);
+        var project = await _context.Projects
+            .Include(p => p.ProjectUsers)
+            .FirstOrDefaultAsync(p => p.Id == createTaskDto.ProjectId);
+        
         if (project == null)
         {
             throw new InvalidOperationException("Project not found.");
+        }
+
+        // User rolü kontrolü: User sadece kendi projelerinde görev oluşturabilir
+        if (!isAdmin)
+        {
+            var isUserAssignedToProject = project.ProjectUsers.Any(pu => pu.UserId == userId);
+            if (!isUserAssignedToProject)
+            {
+                throw new InvalidOperationException("You can only create tasks in projects assigned to you.");
+            }
         }
 
         // Task oluştur
@@ -158,16 +171,29 @@ public class TaskService : ITaskService
         };
     }
 
-    public async Task<TaskResponseDto?> UpdateTaskAsync(int id, UpdateTaskDto updateTaskDto)
+    public async Task<TaskResponseDto?> UpdateTaskAsync(int id, UpdateTaskDto updateTaskDto, int userId, bool isAdmin)
     {
         var task = await _context.TaskItems
             .Include(t => t.TaskUsers)
             .Include(t => t.Project)
+                .ThenInclude(p => p.ProjectUsers)
             .FirstOrDefaultAsync(t => t.Id == id);
 
         if (task == null)
         {
             return null;
+        }
+
+        // User rolü kontrolü: User sadece kendi görevlerini güncelleyebilir
+        if (!isAdmin)
+        {
+            var isUserAssignedToTask = task.TaskUsers.Any(tu => tu.UserId == userId);
+            var isUserAssignedToProject = task.Project.ProjectUsers.Any(pu => pu.UserId == userId);
+            
+            if (!isUserAssignedToTask && !isUserAssignedToProject)
+            {
+                throw new InvalidOperationException("You can only update tasks assigned to you or tasks in your projects.");
+            }
         }
 
         // Proje kontrolü
@@ -237,13 +263,29 @@ public class TaskService : ITaskService
         };
     }
 
-    public async Task<bool> DeleteTaskAsync(int id)
+    public async Task<bool> DeleteTaskAsync(int id, int userId, bool isAdmin)
     {
-        var task = await _context.TaskItems.FindAsync(id);
+        var task = await _context.TaskItems
+            .Include(t => t.TaskUsers)
+            .Include(t => t.Project)
+                .ThenInclude(p => p.ProjectUsers)
+            .FirstOrDefaultAsync(t => t.Id == id);
 
         if (task == null)
         {
             return false;
+        }
+
+        // User rolü kontrolü: User sadece kendi görevlerini silebilir
+        if (!isAdmin)
+        {
+            var isUserAssignedToTask = task.TaskUsers.Any(tu => tu.UserId == userId);
+            var isUserAssignedToProject = task.Project.ProjectUsers.Any(pu => pu.UserId == userId);
+            
+            if (!isUserAssignedToTask && !isUserAssignedToProject)
+            {
+                throw new InvalidOperationException("You can only delete tasks assigned to you or tasks in your projects.");
+            }
         }
 
         _context.TaskItems.Remove(task);

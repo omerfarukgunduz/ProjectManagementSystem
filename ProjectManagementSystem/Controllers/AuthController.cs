@@ -68,5 +68,17 @@ public class AuthController : ControllerBase
 
         return Ok(response);
     }
+
+    /// <summary>
+    /// Logout endpoint - invalidates the current session
+    /// </summary>
+    [HttpPost("logout")]
+    [Microsoft.AspNetCore.Authorization.Authorize]
+    public IActionResult Logout()
+    {
+        // JWT tokens are stateless, so we just return success
+        // The client should remove the token from storage
+        return Ok(new { message = "Logout successful." });
+    }
 }
 

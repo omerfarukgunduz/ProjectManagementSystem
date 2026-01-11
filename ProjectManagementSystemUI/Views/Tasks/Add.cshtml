@@ -1,0 +1,114 @@
+@{
+    ViewData["Title"] = "Yeni Görev Ekle";
+    Layout = "_Layout";
+}
+
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-8">
+        <div class="card shadow">
+            <div class="card-header">
+                <h4 class="mb-0">
+                    <i class="bi bi-plus-circle"></i> Yeni Görev Ekle
+                </h4>
+            </div>
+            <div class="card-body">
+                <form id="addTaskForm">
+                    <div id="formError" class="alert alert-danger" style="display: none;"></div>
+
+                    <div class="mb-3">
+                        <label for="taskTitle" class="form-label">
+                            <i class="bi bi-card-heading"></i> Başlık <span class="text-danger">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="taskTitle"
+                            name="taskTitle"
+                            placeholder="Görev başlığını girin"
+                            required
+                        />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="taskDescription" class="form-label">
+                            <i class="bi bi-file-text"></i> Açıklama
+                        </label>
+                        <textarea
+                            class="form-control"
+                            id="taskDescription"
+                            name="taskDescription"
+                            rows="4"
+                            placeholder="Görev açıklamasını girin"
+                        ></textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="taskProjectId" class="form-label">
+                                <i class="bi bi-folder"></i> Proje <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select" id="taskProjectId" name="taskProjectId" required>
+                                <option value="">Proje seçin...</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="taskStatus" class="form-label">
+                                <i class="bi bi-flag"></i> Durum
+                            </label>
+                            <select class="form-select" id="taskStatus" name="taskStatus">
+                                <option value="0">Yapılacak</option>
+                                <option value="1">Devam Ediyor</option>
+                                <option value="2">Tamamlandı</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="taskPriority" class="form-label">
+                                <i class="bi bi-exclamation-triangle"></i> Öncelik
+                            </label>
+                            <select class="form-select" id="taskPriority" name="taskPriority">
+                                <option value="0">Düşük</option>
+                                <option value="1" selected>Orta</option>
+                                <option value="2">Yüksek</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="taskAssignedUserIds" class="form-label">
+                                <i class="bi bi-people"></i> Atanan Kullanıcılar
+                            </label>
+                            <select
+                                class="form-select"
+                                id="taskAssignedUserIds"
+                                name="taskAssignedUserIds"
+                                multiple
+                                size="5"
+                            >
+                                <option value="">Kullanıcılar yükleniyor...</option>
+                            </select>
+                            <small class="form-text text-muted">
+                                Birden fazla kullanıcı seçmek için Ctrl (Windows) veya Cmd (Mac) tuşuna basılı tutun.
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a asp-controller="Projects" asp-action="Index" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> İptal
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Görev Ekle
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/add-task.js" asp-append-version="true"></script>
+}

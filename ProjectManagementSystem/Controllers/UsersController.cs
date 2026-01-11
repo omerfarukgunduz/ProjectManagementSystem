@@ -115,6 +115,17 @@ public class UsersController : ControllerBase
     }
 
     /// <summary>
+    /// Get all roles
+    /// </summary>
+    [HttpGet("roles")]
+    public async Task<ActionResult<IEnumerable<RoleDto>>> GetRoles()
+    {
+        // This can be accessed by any authenticated user to see available roles
+        var roles = await _userService.GetAllRolesAsync();
+        return Ok(roles);
+    }
+
+    /// <summary>
     /// Change own password
     /// </summary>
     [HttpPost("change-password")]
