@@ -1,10 +1,84 @@
 # Project Management System
 
-## Proje Özeti
+![.NET](https://img.shields.io/badge/.NET-8.0-512BD4?logo=dotnet)
+![ASP.NET Core](https://img.shields.io/badge/ASP.NET%20Core-8.0-512BD4?logo=dotnet)
+![SQL Server](https://img.shields.io/badge/SQL%20Server-2019+-CC2927?logo=microsoft-sql-server)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Status](https://img.shields.io/badge/status-active-success)
+
+Modern, rol tabanlı proje ve görev yönetim sistemi. ASP.NET Core Web API ve MVC teknolojileri ile geliştirilmiştir.
+
+## 📸 Ekran Görüntüleri
+
+### Giriş Sayfası
+![Login](screenshots/login.png)
+*Kullanıcı giriş sayfası - Email ve şifre ile giriş yapabilirsiniz*
+
+### Dashboard
+![Dashboard](screenshots/dashboard.png)
+*Dashboard - Sistem geneli istatistikler ve özet bilgiler*
+
+### Projeler
+![Projects List - Admin](screenshots/projects-list-admin.png)
+*Projeler Listesi (Admin Görünümü) - Tüm projeleri görüntüleme ve yönetme*
+
+![Add Project](screenshots/add-project.png)
+*Yeni Proje Ekleme - Proje oluşturma formu*
+
+![Projects List - User](screenshots/projects-list-user.png)
+*Projeler Listesi (User Görünümü) - Sadece atandığı projeleri görüntüleme*
+
+### Görevler
+![Tasks List](screenshots/tasks-list.png)
+*Görevler Listesi - Kullanıcının görevlerini görüntüleme ve durum güncelleme*
+
+### Kullanıcı Yönetimi
+![Users List](screenshots/users-list.png)
+*Kullanıcılar Listesi (Admin) - Kullanıcı yönetimi ve rol atama*
+
+### Sistem Ayarları
+![SMTP Settings](screenshots/smtp-settings.png)
+*SMTP Ayarları (Admin) - Email gönderimi için SMTP yapılandırması*
+
+## 🚀 Hızlı Başlangıç
+
+```bash
+# 1. Repository'yi klonlayın
+git clone <repository-url>
+cd ProjectManagementSystem
+
+# 2. Veritabanı bağlantı string'ini güncelleyin
+# ProjectManagementSystem/appsettings.json dosyasını düzenleyin
+
+# 3. Veritabanını oluşturun
+cd ProjectManagementSystem
+dotnet ef database update
+
+# 4. Projeyi çalıştırın (iki terminal)
+# Terminal 1 - API
+dotnet run --project ProjectManagementSystem
+
+# Terminal 2 - MVC
+dotnet run --project ProjectManagementSystemUI
+```
+
+Tarayıcıda `https://localhost:7236` adresine gidin ve sistemi kullanmaya başlayın!
+
+## 📋 Proje Özeti
 
 Bu proje, bir organizasyon içerisinde yer alan kullanıcıların projeler ve görevler üzerinden rol bazlı olarak işlem yapabilmesini sağlayan bir Proje ve Görev Yönetim Sistemidir. Sistem, kullanıcıların projelere atanmasını, projeler altında görevlerin oluşturulmasını, bu görevlerin durum ve önceliklerine göre takip edilmesini ve kullanıcı yetkilerine göre yönetilmesini sağlar.
 
-## Teknolojiler
+### ✨ Özellikler
+
+- 🔐 **JWT Token Tabanlı Kimlik Doğrulama**
+- 👥 **Rol Bazlı Yetkilendirme** (Admin/User)
+- 📊 **Dashboard İstatistikleri**
+- 📧 **Email Bildirimleri** (Görev atamaları, şifre sıfırlama)
+- 🔒 **Güvenli Şifre Yönetimi** (BCrypt hash, şifre sıfırlama)
+- 📱 **Responsive Tasarım**
+- 🎨 **Modern UI** (Bootstrap 5.3)
+
+## 🛠️ Teknolojiler
 
 ### Backend
 - **ASP.NET Core 8.0 Web API** - RESTful API mimarisi
@@ -23,77 +97,27 @@ Bu proje, bir organizasyon içerisinde yer alan kullanıcıların projeler ve g�
 - **HTML5/CSS3** - Markup ve styling
 - **jQuery** - DOM manipülasyonu
 
-## Proje Yapısı
+## 📁 Proje Yapısı
 
 ```
 ProjectManagementSystem/
 ├── ProjectManagementSystem/          # API Projesi
 │   ├── Controllers/                   # API Controllers
-│   │   ├── AuthController.cs         # Authentication endpoints
-│   │   ├── UsersController.cs        # User management (Admin only)
-│   │   ├── ProjectsController.cs     # Project management
-│   │   ├── TasksController.cs        # Task management
-│   │   ├── DashboardController.cs   # Dashboard statistics
-│   │   └── SmtpSettingsController.cs # SMTP settings management (Admin only)
 │   ├── Services/                      # Business Logic
-│   │   ├── Auth/                      # Authentication service
-│   │   ├── UserService.cs             # User operations
-│   │   ├── ProjectService.cs          # Project operations
-│   │   ├── TaskService.cs             # Task operations
-│   │   ├── DashboardService.cs       # Dashboard statistics
-│   │   ├── EmailService.cs            # Email sending service
-│   │   └── SmtpSettingsService.cs     # SMTP settings management
 │   ├── Data/                          # DbContext
-│   │   └── ApplicationDbContext.cs    # Entity Framework context
 │   ├── Entities/                      # Domain Models
-│   │   ├── User.cs                    # User entity
-│   │   ├── Role.cs                    # Role entity
-│   │   ├── Project.cs                 # Project entity
-│   │   ├── TaskItem.cs                # Task entity
-│   │   ├── ProjectUser.cs             # Project-User junction
-│   │   ├── TaskUser.cs                # Task-User junction
-│   │   └── SmtpSettings.cs            # SMTP settings entity
 │   ├── DTOs/                          # Data Transfer Objects
-│   │   ├── CreateUserDto.cs           # User creation DTO
-│   │   ├── UpdateUserDto.cs           # User update DTO
-│   │   ├── CreateProjectDto.cs        # Project creation DTO
-│   │   ├── UpdateProjectDto.cs        # Project update DTO
-│   │   ├── CreateTaskDto.cs           # Task creation DTO
-│   │   ├── UpdateTaskDto.cs           # Task update DTO
-│   │   ├── ForgotPasswordDto.cs       # Forgot password DTO
-│   │   ├── ResetPasswordDto.cs        # Reset password DTO
-│   │   ├── SmtpSettingsDto.cs         # SMTP settings DTO
-│   │   └── ...                        # Diğer DTO'lar
 │   ├── Enums/                         # Enum Types
-│   │   ├── TaskItemStatus.cs          # Task status enum
-│   │   └── TaskItemPriority.cs        # Task priority enum
 │   ├── Auth/                          # JWT Authentication
-│   │   ├── JwtSettings.cs             # JWT configuration
-│   │   └── JwtTokenService.cs         # Token generation
 │   └── Migrations/                    # Database Migrations
 │
 └── ProjectManagementSystemUI/        # MVC Projesi
     ├── Controllers/                   # MVC Controllers
-    │   ├── AuthController.cs          # Login/Logout/ForgotPassword/ResetPassword
-    │   ├── DashboardController.cs     # Dashboard page
-    │   ├── UsersController.cs         # User management pages
-    │   ├── ProjectsController.cs      # Project management pages
-    │   ├── TasksController.cs         # Task management pages
-    │   └── SettingsController.cs      # System settings (SMTP) - Admin only
     ├── Views/                         # Razor Views
-    │   ├── Auth/                      # Login view
-    │   ├── Dashboard/                 # Dashboard view
-    │   ├── Users/                     # User management views
-    │   ├── Projects/                  # Project management views
-    │   ├── Tasks/                     # Task management views
-    │   └── Shared/                    # Layout and partial views
     └── wwwroot/                       # Static Files
-        ├── css/                       # Stylesheets
-        ├── js/                        # JavaScript files
-        └── lib/                       # Third-party libraries
 ```
 
-## Kurulum ve Çalıştırma
+## 📦 Kurulum ve Çalıştırma
 
 ### Gereksinimler
 - .NET 8.0 SDK veya üzeri
@@ -101,7 +125,7 @@ ProjectManagementSystem/
 - Visual Studio 2022 veya Visual Studio Code
 - Git (opsiyonel)
 
-### Adımlar
+### Detaylı Kurulum Adımları
 
 1. **Repository'yi klonlayın:**
    ```bash
@@ -172,7 +196,7 @@ ProjectManagementSystem/
      }
      ```
 
-## Kullanıcı ve Rol Sistemi
+## 👥 Kullanıcı ve Rol Sistemi
 
 ### Roller
 
@@ -184,6 +208,7 @@ Sistem genelinde yönetim yetkilerine sahiptir:
 - ✅ Tüm görevleri görüntüleyebilir, oluşturabilir, güncelleyebilir ve silebilir
 - ✅ Proje detaylarını görüntüleyebilir
 - ✅ Dashboard'da sistem geneli istatistikleri görebilir
+- ✅ SMTP ayarlarını yönetebilir
 
 #### User
 Sınırlı yetkilere sahiptir:
@@ -199,82 +224,61 @@ Sınırlı yetkilere sahiptir:
 - Service katmanında ek güvenlik kontrolleri yapılmaktadır
 - Frontend'de rol bazlı UI elementleri gösterilir/gizlenir
 
-## API Endpoints
+## 🔌 API Endpoints
 
 ### Authentication
-- `POST /api/auth/login` - Kullanıcı girişi
-  - Request: `{ "email": "string", "password": "string" }`
-  - Response: `{ "token": "string", "role": "string", "userId": int, "username": "string" }`
-
-- `POST /api/auth/register` - Kullanıcı kaydı
-  - Request: `{ "username": "string", "email": "string", "password": "string", "roleId": int? }`
-  - Response: `{ "token": "string", "role": "string", "userId": int, "username": "string" }`
-
-- `POST /api/auth/logout` - Kullanıcı çıkışı (Authorize gerekli)
-  - Response: `{ "message": "Logout successful." }`
-
-- `POST /api/auth/forgot-password` - Şifre sıfırlama talebi
-  - Request: `{ "email": "string" }`
-  - Response: `{ "message": "string" }`
-  - Email gönderir (kullanıcı yoksa bile güvenlik için başarı mesajı döner)
-
-- `POST /api/auth/reset-password` - Şifre sıfırlama
-  - Request: `{ "token": "string", "email": "string", "newPassword": "string" }`
-  - Response: `{ "message": "string" }`
-  - Token 24 saat geçerlidir, tek kullanımlıktır
+| Method | Endpoint | Açıklama | Yetki |
+|--------|----------|----------|-------|
+| POST | `/api/auth/login` | Kullanıcı girişi | Public |
+| POST | `/api/auth/register` | Kullanıcı kaydı | Public |
+| POST | `/api/auth/logout` | Kullanıcı çıkışı | Authorized |
+| POST | `/api/auth/forgot-password` | Şifre sıfırlama talebi | Public |
+| POST | `/api/auth/reset-password` | Şifre sıfırlama | Public |
 
 ### Users (Admin only)
-- `GET /api/users` - Tüm kullanıcıları listele
-- `GET /api/users/{id}` - Kullanıcı detayı
-- `POST /api/users` - Yeni kullanıcı oluştur
-  - Request: `{ "username": "string", "email": "string", "password": "string", "roleId": int }`
-- `PUT /api/users/{id}` - Kullanıcı güncelle
-  - Request: `{ "username": "string", "email": "string", "roleId": int }`
-- `DELETE /api/users/{id}` - Kullanıcı sil
-- `GET /api/users/roles` - Rolleri listele
-- `POST /api/users/change-password` - Şifre değiştir (kendi şifresi)
+| Method | Endpoint | Açıklama |
+|--------|----------|----------|
+| GET | `/api/users` | Tüm kullanıcıları listele |
+| GET | `/api/users/{id}` | Kullanıcı detayı |
+| POST | `/api/users` | Yeni kullanıcı oluştur |
+| PUT | `/api/users/{id}` | Kullanıcı güncelle |
+| DELETE | `/api/users/{id}` | Kullanıcı sil |
+| GET | `/api/users/roles` | Rolleri listele |
+| POST | `/api/users/change-password` | Şifre değiştir |
 
 ### Projects
-- `GET /api/projects` - Projeleri listele
-  - Admin: Tüm projeler
-  - User: Sadece atandığı projeler
-- `GET /api/projects/{id}` - Proje detayı
-- `POST /api/projects` - Yeni proje oluştur (Admin only)
-  - Request: `{ "name": "string", "description": "string", "userIds": [int]? }`
-- `PUT /api/projects/{id}` - Proje güncelle (Admin only)
-  - Request: `{ "name": "string", "description": "string", "userIds": [int]? }`
-- `DELETE /api/projects/{id}` - Proje sil (Admin only)
+| Method | Endpoint | Açıklama | Yetki |
+|--------|----------|----------|-------|
+| GET | `/api/projects` | Projeleri listele | Admin: Tümü, User: Atandığı |
+| GET | `/api/projects/{id}` | Proje detayı | Authorized |
+| POST | `/api/projects` | Yeni proje oluştur | Admin |
+| PUT | `/api/projects/{id}` | Proje güncelle | Admin |
+| DELETE | `/api/projects/{id}` | Proje sil | Admin |
 
 ### Tasks
-- `GET /api/tasks?projectId={id}` - Görevleri listele
-  - Admin: Tüm görevler
-  - User: Sadece atandığı görevler veya projesindeki görevler
-- `GET /api/tasks/{id}` - Görev detayı
-- `POST /api/tasks` - Yeni görev oluştur
-  - Admin: Herhangi bir projede görev oluşturabilir
-  - User: Sadece kendi projelerinde görev oluşturabilir (sadece kendisini atayabilir)
-  - Request: `{ "title": "string", "description": "string", "status": int, "priority": int, "projectId": int, "assignedUserIds": [int]? }`
-- `PUT /api/tasks/{id}` - Görev güncelle
-  - Admin: Tüm görevleri güncelleyebilir
-  - User: Sadece kendi görevlerini güncelleyebilir
-  - Request: `{ "title": "string", "description": "string", "status": int, "priority": int, "projectId": int, "assignedUserIds": [int]? }`
-- `DELETE /api/tasks/{id}` - Görev sil
-  - Admin: Tüm görevleri silebilir
-  - User: Sadece kendi görevlerini silebilir
+| Method | Endpoint | Açıklama | Yetki |
+|--------|----------|----------|-------|
+| GET | `/api/tasks?projectId={id}` | Görevleri listele | Admin: Tümü, User: Atandığı |
+| GET | `/api/tasks/{id}` | Görev detayı | Authorized |
+| POST | `/api/tasks` | Yeni görev oluştur | Admin: Tümü, User: Kendi projesinde |
+| PUT | `/api/tasks/{id}` | Görev güncelle | Admin: Tümü, User: Kendi görevi |
+| DELETE | `/api/tasks/{id}` | Görev sil | Admin: Tümü, User: Kendi görevi |
 
 ### Dashboard
-- `GET /api/dashboard/stats` - Dashboard istatistikleri
-  - Admin: Sistem geneli istatistikler
-  - User: Kendi verilerine ait istatistikler
-  - Response: `{ "totalProjects": int, "totalTasks": int, "completedTasks": int, "inProgressTasks": int, "todoTasks": int }`
+| Method | Endpoint | Açıklama | Yetki |
+|--------|----------|----------|-------|
+| GET | `/api/dashboard/stats` | Dashboard istatistikleri | Admin: Sistem geneli, User: Kendi verileri |
 
 ### SMTP Settings (Admin only)
-- `GET /api/smtpsettings` - SMTP ayarlarını getir
-- `POST /api/smtpsettings` - SMTP ayarlarını kaydet/güncelle
-  - Request: `{ "host": "string", "port": int, "username": "string", "password": "string", "enableSsl": bool, "fromEmail": "string", "fromName": "string", "isActive": bool }`
-- `POST /api/smtpsettings/test` - SMTP bağlantısını test et
+| Method | Endpoint | Açıklama |
+|--------|----------|----------|
+| GET | `/api/smtpsettings` | SMTP ayarlarını getir |
+| POST | `/api/smtpsettings` | SMTP ayarlarını kaydet/güncelle |
+| POST | `/api/smtpsettings/test` | SMTP bağlantısını test et |
 
-## Veritabanı Yapısı
+> **Detaylı API Dokümantasyonu:** API projesi çalıştığında `https://localhost:7241/swagger` adresinden erişilebilir.
+
+## 🗄️ Veritabanı Yapısı
 
 ### Entity İlişkileri
 - **User** - **Role**: Many-to-One (Bir kullanıcının bir rolü vardır)
@@ -284,7 +288,7 @@ Sınırlı yetkilere sahiptir:
 - **TaskItem** - **User**: Many-to-Many (Bir göreve birden fazla kullanıcı atanabilir)
   - Junction Table: `TaskUsers`
 
-### Tablolar
+### Ana Tablolar
 
 #### Roles
 - `Id` (int, PK)
@@ -297,19 +301,14 @@ Sınırlı yetkilere sahiptir:
 - `PasswordHash` (string) - BCrypt hash
 - `RoleId` (int, FK -> Roles)
 - `CreatedAt` (DateTime)
-- `PasswordResetToken` (string, nullable) - Şifre sıfırlama token'ı
-- `PasswordResetTokenExpiry` (DateTime, nullable) - Token geçerlilik süresi
+- `PasswordResetToken` (string, nullable)
+- `PasswordResetTokenExpiry` (DateTime, nullable)
 
 #### Projects
 - `Id` (int, PK)
 - `Name` (string)
 - `Description` (string)
 - `CreatedDate` (DateTime)
-
-#### ProjectUsers (Junction Table)
-- `ProjectId` (int, FK -> Projects)
-- `UserId` (int, FK -> Users)
-- Composite Primary Key: (ProjectId, UserId)
 
 #### TaskItems
 - `Id` (int, PK)
@@ -320,25 +319,20 @@ Sınırlı yetkilere sahiptir:
 - `ProjectId` (int, FK -> Projects)
 - `CreatedDate` (DateTime)
 
-#### TaskUsers (Junction Table)
-- `TaskId` (int, FK -> TaskItems)
-- `UserId` (int, FK -> Users)
-- Composite Primary Key: (TaskId, UserId)
-
 #### SmtpSettings
 - `Id` (int, PK)
-- `Host` (string) - SMTP sunucu adresi
-- `Port` (int) - SMTP port numarası
-- `Username` (string) - SMTP kullanıcı adı
-- `Password` (string) - SMTP şifresi (veritabanında saklanır)
-- `EnableSsl` (bool) - SSL/TLS kullanımı
-- `FromEmail` (string) - Gönderen e-posta adresi
-- `FromName` (string) - Gönderen adı
-- `IsActive` (bool) - Aktif/pasif durumu
+- `Host` (string)
+- `Port` (int)
+- `Username` (string)
+- `Password` (string)
+- `EnableSsl` (bool)
+- `FromEmail` (string)
+- `FromName` (string)
+- `IsActive` (bool)
 - `CreatedAt` (DateTime)
 - `UpdatedAt` (DateTime, nullable)
 
-## Güvenlik
+## 🔒 Güvenlik
 
 ### Authentication
 - JWT token bazlı kimlik doğrulama
@@ -361,7 +355,7 @@ Sınırlı yetkilere sahiptir:
 - Service katmanında business logic validasyonları
 - Frontend'de client-side validasyonlar
 
-## Frontend Özellikleri
+## 🎨 Frontend Özellikleri
 
 ### Sayfalar
 - **Login Sayfası** (`/Auth/Login`): Email ve şifre ile giriş, "Şifremi Unuttum" linki
@@ -385,18 +379,7 @@ Sınırlı yetkilere sahiptir:
 - **Şifre Sıfırlama**: Email ile şifre sıfırlama özelliği
 - **SMTP Yönetimi**: Admin panelinden SMTP ayarları yönetimi (veritabanında saklanır)
 
-## Varsayımlar
-
-1. Kullanıcılar email adresi ile giriş yapar
-2. Şifre minimum 6 karakter olmalıdır
-3. JWT token süresi varsayılan olarak 24 saattir (appsettings.json'da yapılandırılabilir)
-4. User rolündeki kullanıcılar sadece kendilerine atanmış projelerde görev oluşturabilir
-5. User rolündeki kullanıcılar görev oluştururken sadece kendisini atayabilir
-6. User rolündeki kullanıcılar sadece kendilerine atanmış görevleri güncelleyebilir/silebilir
-7. Proje silindiğinde, projeye ait görevler de silinir (Cascade Delete)
-8. Görev silindiğinde, göreve atanan kullanıcı ilişkileri de silinir (Cascade Delete)
-
-## Email Sistemi
+## 📧 Email Sistemi
 
 ### SMTP Yapılandırması
 - SMTP ayarları veritabanında saklanır (güvenlik için)
@@ -414,21 +397,18 @@ Sınırlı yetkilere sahiptir:
 - Token'lar tek kullanımlıktır (kullanıldıktan sonra silinir)
 - Email enumeration koruması (kullanıcı yoksa bile başarı mesajı)
 
-## Eksik Kalan veya Geliştirilebilecek Noktalar
+## 📝 Varsayımlar
 
-Eksik özellik bulunmamaktadır ancak ileride eklenebilecek bazı geliştirmeler şunlardır:
-1. **Dosya Yükleme**: Görevlere dosya ekleme özelliği
-2. **Yorum Sistemi**: Görevlere yorum ekleme özelliği
-3. **Zaman Takibi**: Görevler için zaman takibi 
-4. **Bulk İşlemler**: Toplu işlemler (toplu silme, güncelleme)
+1. Kullanıcılar email adresi ile giriş yapar
+2. Şifre minimum 6 karakter olmalıdır
+3. JWT token süresi varsayılan olarak 24 saattir (appsettings.json'da yapılandırılabilir)
+4. User rolündeki kullanıcılar sadece kendilerine atanmış projelerde görev oluşturabilir
+5. User rolündeki kullanıcılar görev oluştururken sadece kendisini atayabilir
+6. User rolündeki kullanıcılar sadece kendilerine atanmış görevleri güncelleyebilir/silebilir
+7. Proje silindiğinde, projeye ait görevler de silinir (Cascade Delete)
+8. Görev silindiğinde, göreve atanan kullanıcı ilişkileri de silinir (Cascade Delete)
 
-
-## API Dokümantasyonu
-
-API dokümantasyonu Swagger UI üzerinden erişilebilir:
-- API projesi çalıştığında: `https://localhost:7241/swagger`
-
-## Hata Ayıklama
+## 🐛 Hata Ayıklama
 
 ### Yaygın Sorunlar
 
@@ -459,8 +439,42 @@ API dokümantasyonu Swagger UI üzerinden erişilebilir:
    - Email'in spam klasörüne düşmüş olabileceğini kontrol edin
    - Token'ın süresinin dolmadığından emin olun (24 saat)
 
-## İletişim
+## 🚧 Gelecek Geliştirmeler
 
-Sorularınız için omerfarukgunduz034@gmail.com adresinden ulaşabilirsiniz.
+Eksik özellik bulunmamaktadır ancak ileride eklenebilecek bazı geliştirmeler şunlardır:
 
+1. **Dosya Yükleme**: Görevlere dosya ekleme özelliği
+2. **Yorum Sistemi**: Görevlere yorum ekleme özelliği
+3. **Zaman Takibi**: Görevler için zaman takibi 
+4. **Bulk İşlemler**: Toplu işlemler (toplu silme, güncelleme)
+5. **Bildirimler**: Gerçek zamanlı bildirimler (SignalR)
+6. **Raporlama**: Detaylı raporlama ve analitik özellikleri
 
+## 🤝 Katkıda Bulunma
+
+Katkılarınızı bekliyoruz! Lütfen katkıda bulunmadan önce şu adımları izleyin:
+
+1. Bu repository'yi fork edin
+2. Yeni bir branch oluşturun (`git checkout -b feature/amazing-feature`)
+3. Değişikliklerinizi commit edin (`git commit -m 'Add some amazing feature'`)
+4. Branch'inizi push edin (`git push origin feature/amazing-feature`)
+5. Bir Pull Request oluşturun
+
+### Katkıda Bulunma Kuralları
+
+- Kod standartlarına uyun (C# coding conventions)
+- Yeni özellikler için test yazın
+- README'yi güncelleyin (gerekirse)
+- Commit mesajlarınızı açıklayıcı yazın
+
+## 📄 Lisans
+
+Bu proje MIT lisansı altında lisanslanmıştır. Detaylar için `LICENSE` dosyasına bakın.
+
+## 📞 İletişim
+
+Sorularınız için [omerfarukgunduz034@gmail.com](mailto:omerfarukgunduz034@gmail.com) adresinden ulaşabilirsiniz.
+
+---
+
+⭐ Bu projeyi beğendiyseniz yıldız vermeyi unutmayın!

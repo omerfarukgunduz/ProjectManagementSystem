@@ -55,8 +55,6 @@ async function loadSettings() {
             document.getElementById('smtpPassword').value = settings.password || '';
             document.getElementById('smtpFromEmail').value = settings.fromEmail || '';
             document.getElementById('smtpFromName').value = settings.fromName || '';
-            document.getElementById('smtpEnableSsl').checked = settings.enableSsl !== false;
-            document.getElementById('smtpIsActive').checked = settings.isActive !== false;
 
             loadingIndicator.style.display = 'none';
             settingsForm.style.display = 'block';
@@ -104,10 +102,10 @@ function setupFormSubmission() {
                 port: parseInt(document.getElementById('smtpPort').value),
                 username: document.getElementById('smtpUsername').value.trim(),
                 password: document.getElementById('smtpPassword').value,
-                enableSsl: document.getElementById('smtpEnableSsl').checked,
+                enableSsl: true,
                 fromEmail: document.getElementById('smtpFromEmail').value.trim(),
                 fromName: document.getElementById('smtpFromName').value.trim(),
-                isActive: document.getElementById('smtpIsActive').checked
+                isActive: true
             };
 
             // Validation
