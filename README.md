@@ -3,41 +3,43 @@
 ![.NET](https://img.shields.io/badge/.NET-8.0-512BD4?logo=dotnet)
 ![ASP.NET Core](https://img.shields.io/badge/ASP.NET%20Core-8.0-512BD4?logo=dotnet)
 ![SQL Server](https://img.shields.io/badge/SQL%20Server-2019+-CC2927?logo=microsoft-sql-server)
-![License](https://img.shields.io/badge/license-MIT-green)
-![Status](https://img.shields.io/badge/status-active-success)
+
 
 Modern, rol tabanlı proje ve görev yönetim sistemi. ASP.NET Core Web API ve MVC teknolojileri ile geliştirilmiştir.
 
 ## 📸 Ekran Görüntüleri
 
+
 ### Giriş Sayfası
-![Login](screenshots/login.png)
+![Login](https://i.hizliresim.com/8u87k7g.jpg)
+
 *Kullanıcı giriş sayfası - Email ve şifre ile giriş yapabilirsiniz*
 
+
 ### Dashboard
-![Dashboard](screenshots/dashboard.png)
+![Dashboard](https://i.hizliresim.com/3a9e4fl.jpg)
 *Dashboard - Sistem geneli istatistikler ve özet bilgiler*
 
 ### Projeler
-![Projects List - Admin](screenshots/projects-list-admin.png)
+![Projects List - Admin](https://i.hizliresim.com/kfrcz8n.jpg)
 *Projeler Listesi (Admin Görünümü) - Tüm projeleri görüntüleme ve yönetme*
 
-![Add Project](screenshots/add-project.png)
+![Add Project](https://i.hizliresim.com/cc6c0zf.jpg)
 *Yeni Proje Ekleme - Proje oluşturma formu*
 
-![Projects List - User](screenshots/projects-list-user.png)
+![Projects List - User](https://i.hizliresim.com/ojewe6i.jpg)
 *Projeler Listesi (User Görünümü) - Sadece atandığı projeleri görüntüleme*
 
 ### Görevler
-![Tasks List](screenshots/tasks-list.png)
+![Tasks List](https://i.hizliresim.com/p6cs17r.jpg)
 *Görevler Listesi - Kullanıcının görevlerini görüntüleme ve durum güncelleme*
 
 ### Kullanıcı Yönetimi
-![Users List](screenshots/users-list.png)
+![Users List](https://i.hizliresim.com/ab99lr8.jpg)
 *Kullanıcılar Listesi (Admin) - Kullanıcı yönetimi ve rol atama*
 
 ### Sistem Ayarları
-![SMTP Settings](screenshots/smtp-settings.png)
+![SMTP Settings](https://i.hizliresim.com/5urv691.jpg)
 *SMTP Ayarları (Admin) - Email gönderimi için SMTP yapılandırması*
 
 ## 🚀 Hızlı Başlangıç
@@ -447,34 +449,9 @@ Eksik özellik bulunmamaktadır ancak ileride eklenebilecek bazı geliştirmeler
 2. **Yorum Sistemi**: Görevlere yorum ekleme özelliği
 3. **Zaman Takibi**: Görevler için zaman takibi 
 4. **Bulk İşlemler**: Toplu işlemler (toplu silme, güncelleme)
-5. **Bildirimler**: Gerçek zamanlı bildirimler (SignalR)
-6. **Raporlama**: Detaylı raporlama ve analitik özellikleri
 
-## 🤝 Katkıda Bulunma
-
-Katkılarınızı bekliyoruz! Lütfen katkıda bulunmadan önce şu adımları izleyin:
-
-1. Bu repository'yi fork edin
-2. Yeni bir branch oluşturun (`git checkout -b feature/amazing-feature`)
-3. Değişikliklerinizi commit edin (`git commit -m 'Add some amazing feature'`)
-4. Branch'inizi push edin (`git push origin feature/amazing-feature`)
-5. Bir Pull Request oluşturun
-
-### Katkıda Bulunma Kuralları
-
-- Kod standartlarına uyun (C# coding conventions)
-- Yeni özellikler için test yazın
-- README'yi güncelleyin (gerekirse)
-- Commit mesajlarınızı açıklayıcı yazın
-
-## 📄 Lisans
-
-Bu proje MIT lisansı altında lisanslanmıştır. Detaylar için `LICENSE` dosyasına bakın.
 
 ## 📞 İletişim
 
 Sorularınız için [omerfarukgunduz034@gmail.com](mailto:omerfarukgunduz034@gmail.com) adresinden ulaşabilirsiniz.
 
----
-
-⭐ Bu projeyi beğendiyseniz yıldız vermeyi unutmayın!
