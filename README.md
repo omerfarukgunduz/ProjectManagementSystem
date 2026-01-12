@@ -282,6 +282,10 @@ Sınırlı yetkilere sahiptir:
 
 ## 🗄️ Veritabanı Yapısı
 
+### ER Diyagramı
+![diyagram](https://i.hizliresim.com/4atcfxf.jpg)
+
+
 ### Entity İlişkileri
 - **User** - **Role**: Many-to-One (Bir kullanıcının bir rolü vardır)
 - **Project** - **User**: Many-to-Many (Bir projede birden fazla kullanıcı, bir kullanıcı birden fazla projede)
